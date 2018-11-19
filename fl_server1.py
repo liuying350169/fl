@@ -46,39 +46,49 @@ class GlobalModel(object):
         raise NotImplementedError()
 
     # client_updates = [(w, n)..]
-    def update_weights(self, client_weights, client_sizes):
+    def update_weights(self, client_weights, client_sizes,current_round):
+        print("1114  update_weights")
+        
         new_weights = [np.zeros(w.shape) for w in self.current_weights]
         total_size = np.sum(client_sizes)
         #total_size is not number
+        
+#         for c in range(len(client_weights)):            
+#             if(c==(current_round%5)):
+#                 print("c=",c,"round =",current_round)
+#                 for i in range(len(new_weights)):                    
+#                     if(isinstance(client_weights[c][i],unicode)):
+#                         if(not isinstance(client_weights[c-1][i],unicode)):
+#                             new_weights[i] = client_weights[c-1][i]
+#                         else:
+#                             if(not isinstance(client_weights[c+1][i],unicode)):
+#                                 new_weights[i] = client_weights[c+1][i]
+#                             else:
+#                                 new_weights[i] = client_weights[c-2][i]
+                        
+#                     else:
+#                         #new_weights[i] += client_weights[c][i] * client_sizes[c] / total_size
+#                         new_weights[i] = client_weights[c][i]
+#         self.current_weights = new_weights
+#         print("GlobalModel update_weights")
 
-#c is meige client
-#i is weight limian de 
-#zhi yao rang c = round shu jike
-#qita bu guan
+
         for c in range(len(client_weights)):
-            for i in range(len(new_weights)):
-                ###error divide
-#                 print("c=",c,"----------i=",i)
-#                 print("total_size = ",total_size)
-#                 print("client_weights = ",client_weights[c][i])
-#                 print("client_sizes = ",client_sizes[c])
-                
-#                 print("type(client_weights[c][i])",type(client_weights[c][i]))                   
-                  
-                if(isinstance(client_weights[c][i],unicode)):
-                    #client_weights[c][i]=corrent_weight
-                    #break
-                    continue
-#                     print("error  c=",c,"----------i=",i)
-#                     print("error type(client_weights[0][i])",type(client_weights[0][i]))
-#                     print("error client_weights[0][i] = ",client_weights[0][i])
-                    #new_weights[i] += client_weights[0][i] * client_sizes[c] / total_size
-                    #print("type(corrent_weight)",type(corrent_weight))
-                else:
-                    new_weights[i] += client_weights[c][i] * client_sizes[c] / total_size
+            #if(c==current_round):
+            if(1):
+                print("c=",c,"round =",current_round)
+                for i in range(len(new_weights)):               
+                    if(isinstance(client_weights[c][i],unicode)):
+                        print("continue")
+                        continue
+                    else:
+
+                        new_weights[i] += client_weights[c][i] * client_sizes[c] / total_size
+
         self.current_weights = new_weights
         print("GlobalModel update_weights")
-        
+
+
 
     def aggregate_loss_accuracy(self, client_losses, client_accuracies, client_sizes):
         total_size = np.sum(client_sizes)
@@ -136,12 +146,11 @@ class GlobalModel_MNIST_CNN(GlobalModel):
         model.add(Conv2D(64, (3, 3), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.25))
-        model.add(Flatten())#flatten between conv and fc
-        model.add(Dense(128, activation='relu')) # fc
+        model.add(Flatten())
+        model.add(Dense(128, activation='relu'))
         model.add(Dropout(0.5))
         model.add(Dense(10, activation='softmax'))
-        
-        
+
         model.compile(loss=keras.losses.categorical_crossentropy,
                       optimizer=keras.optimizers.Adadelta(),
                       metrics=['accuracy'])
@@ -155,9 +164,9 @@ class GlobalModel_MNIST_CNN(GlobalModel):
 
 class FLServer(object):
     
-    MIN_NUM_WORKERS = 5
-    MAX_NUM_ROUNDS = 19
-    NUM_CLIENTS_CONTACTED_PER_ROUND = 5
+    MIN_NUM_WORKERS = 6
+    MAX_NUM_ROUNDS = 7
+    NUM_CLIENTS_CONTACTED_PER_ROUND = 6
     ROUNDS_BETWEEN_VALIDATIONS = 2
 
     def __init__(self, global_model, host, port):
@@ -235,9 +244,9 @@ class FLServer(object):
             print("received client update of bytes: ", sys.getsizeof(data))
             print("handle client_update", request.sid)
             for x in data:
-#                 if x != 'weights':
-#                     print("error x != 'weights':")
-#                     print(x, data[x])
+                if x != 'weights':
+                    print("error x != 'weights':")
+                    print(x, data[x])
             # data:
             #   weights
             #   train_size
@@ -250,16 +259,17 @@ class FLServer(object):
             # discard outdated update
 #             with open('data.txt', 'w') as outfile:
 #                 json.dump(data, outfile)
-#             if data['round_number'] == self.current_round:
-#                 self.current_round_client_updates += [data]
-#                 self.current_round_client_updates[-1]['weights'] = pickle_string_to_obj(data['weights'])
+            if data['round_number'] == self.current_round:
+                self.current_round_client_updates += [data]
+                self.current_round_client_updates[-1]['weights'] = pickle_string_to_obj(data['weights'])
                 
                 # tolerate 30% unresponsive clients
                 if len(self.current_round_client_updates) == FLServer.NUM_CLIENTS_CONTACTED_PER_ROUND * 1:                   
-                    time.sleep(10)#seconds                   
+                    time.sleep(5)                   
                     self.global_model.update_weights(
                         [x['weights'] for x in self.current_round_client_updates],
                         [x['train_size'] for x in self.current_round_client_updates],
+                        int(self.current_round)
                     )
                     
                     aggr_train_loss, aggr_train_accuracy = self.global_model.aggregate_train_loss_accuracy(
@@ -286,7 +296,7 @@ class FLServer(object):
                         
                     #stop and eval based on loss
 #                     if self.global_model.prev_train_loss is not None and \
-#                             (self.global_model.prev_train_loss - aggr_train_loss) / self.global_model.prev_train_loss == 0:                     
+#                             (self.global_model.prev_train_loss - aggr_train_loss) / self.global_model.prev_train_loss < 0.01:                        
 #                         # converges
 #                         print("converges! starting test phase..")
 #                         self.stop_and_eval()
@@ -309,7 +319,7 @@ class FLServer(object):
             self.eval_client_updates += [data]
 
             # tolerate 30% unresponsive clients
-            if len(self.eval_client_updates) >= FLServer.NUM_CLIENTS_CONTACTED_PER_ROUND * 1:
+            if len(self.eval_client_updates) == FLServer.NUM_CLIENTS_CONTACTED_PER_ROUND * 1:
                 aggr_test_loss, aggr_test_accuracy = self.global_model.aggregate_loss_accuracy(
                     [x['test_loss'] for x in self.eval_client_updates],
                     [x['test_accuracy'] for x in self.eval_client_updates],
@@ -330,9 +340,7 @@ class FLServer(object):
         print("### Round ", self.current_round, "###")
         client_sids_selected = random.sample(list(self.ready_client_sids), FLServer.NUM_CLIENTS_CONTACTED_PER_ROUND)
         print("request updates from", client_sids_selected)
-        
-        
-        #request
+
         # by default each client cnn is in its own "room"
         for rid in client_sids_selected:
             emit('request_update', {
@@ -384,7 +392,4 @@ if __name__ == '__main__':
     server = FLServer(GlobalModel_MNIST_CNN, "172.17.0.2", 1111)
     print("listening on 172.17.0.2:1111");
     server.start()
-
-
-
 
