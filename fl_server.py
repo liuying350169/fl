@@ -78,12 +78,13 @@ class GlobalModel(object):
               
               
 #liuying if use break mode then  should change the total_size 
+
+
 #         for c in range(len(client_weights)):
 #             for i in range(len(new_weights)):
 #                 if(isinstance(client_weights[c][i],unicode)):
 #                     total_size -= client_sizes[c]
-#                     break;
-              
+#                     break;              
 #         for c in range(len(client_weights)):
 #             #if(c==current_round):
 #             if(1):
@@ -276,7 +277,7 @@ class FLServer(object):
                 
                 # tolerate 30% unresponsive clients
                 if len(self.current_round_client_updates) == FLServer.NUM_CLIENTS_CONTACTED_PER_ROUND * 1:                   
-                    time.sleep(5)                   
+                    time.sleep(1)                   
                     self.global_model.update_weights(
                         [x['weights'] for x in self.current_round_client_updates],
                         [x['train_size'] for x in self.current_round_client_updates],
