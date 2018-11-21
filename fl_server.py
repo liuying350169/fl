@@ -179,7 +179,7 @@ class FLServer(object):
     MIN_NUM_WORKERS = 6
     MAX_NUM_ROUNDS = 20
     NUM_CLIENTS_CONTACTED_PER_ROUND = 6
-    ROUNDS_BETWEEN_VALIDATIONS = 2
+    ROUNDS_BETWEEN_VALIDATIONS = 1
 
     def __init__(self, global_model, host, port):
         self.global_model = global_model()
