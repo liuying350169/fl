@@ -297,6 +297,10 @@ class FLServer(object):
 
                     ###error index out of range 
                     # because the valid isn't calcu every time before so it needs if condition
+              
+                    #liuying discaver the bug: is some round the list named current_round_client_update have len() is zero, 
+                    #and normal value is 6
+                    # next should find why and fix it or aviod it
                      
                     #print("self.current_round_client_updates[0]--------------------------------------------",self.current_round_client_updates[0])
                     print("--------------------------------------------self.current_round_client_updates.size",len(self.current_round_client_updates))
