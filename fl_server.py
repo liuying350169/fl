@@ -255,6 +255,7 @@ class FLServer(object):
         def handle_client_update(data):
             print("received client update of bytes: ", sys.getsizeof(data))
             print("handle client_update", request.sid)
+              
             for x in data:
                 if x != 'weights':
                     print("error x != 'weights':")
@@ -271,6 +272,8 @@ class FLServer(object):
             # discard outdated update
 #             with open('data.txt', 'w') as outfile:
 #                 json.dump(data, outfile)
+
+
             if data['round_number'] == self.current_round:
                 self.current_round_client_updates += [data]
                 self.current_round_client_updates[-1]['weights'] = pickle_string_to_obj(data['weights'])
@@ -301,37 +304,40 @@ class FLServer(object):
                     #liuying discaver the bug: is some round the list named current_round_client_update have len() is zero, 
                     #and normal value is 6
                     # next should find why and fix it or aviod it
-                     
-                    #print("self.current_round_client_updates[0]--------------------------------------------",self.current_round_client_updates[0])
-                    print("--------------------------------------------self.current_round_client_updates.size",len(self.current_round_client_updates))
-                    print("--------------------------------------------self.current_round_client_updates[0]",self.current_round_client_updates[0])
-                    #print("--------------------------------------------valid_loss",valid_loss)                    
-                                                                                 
-                    if 'valid_loss' in self.current_round_client_updates[0]:
-                        aggr_valid_loss, aggr_valid_accuracy = self.global_model.aggregate_valid_loss_accuracy(
-                            [x['valid_loss'] for x in self.current_round_client_updates],
-                            [x['valid_accuracy'] for x in self.current_round_client_updates],
-                            [x['valid_size'] for x in self.current_round_client_updates],
-                            self.current_round
-                        )
-                        print("aggr_valid_loss", aggr_valid_loss)
-                        print("aggr_valid_accuracy", aggr_valid_accuracy)
-                        
-                    #stop and eval based on loss
-                    if self.global_model.prev_train_loss is not None and \
-                            (self.global_model.prev_train_loss - aggr_train_loss) / self.global_model.prev_train_loss < 0.01 and \
-                            aggr_valid_accuracy > 0.5:                        
-                        # converges
-                        print("converges! starting test phase..")
-                        self.stop_and_eval()
-                        return
                     
-                    self.global_model.prev_train_loss = aggr_train_loss
-
-                    if self.current_round >= FLServer.MAX_NUM_ROUNDS or aggr_valid_accuracy > 0.98 :
-                        self.stop_and_eval()
-                    else:
+                    if(len(self.current_round_client_updates) == 0):
                         self.train_next_round()
+                    else:                 
+                           #print("self.current_round_client_updates[0]--------------------------------------------",self.current_round_client_updates[0])
+                           print("--------------------------------------------self.current_round_client_updates.size",len(self.current_round_client_updates))
+                           #print("--------------------------------------------self.current_round_client_updates[0]",self.current_round_client_updates[0])
+                           #print("--------------------------------------------valid_loss",valid_loss)                    
+
+                           if 'valid_loss' in self.current_round_client_updates[0]:
+                               aggr_valid_loss, aggr_valid_accuracy = self.global_model.aggregate_valid_loss_accuracy(
+                                   [x['valid_loss'] for x in self.current_round_client_updates],
+                                   [x['valid_accuracy'] for x in self.current_round_client_updates],
+                                   [x['valid_size'] for x in self.current_round_client_updates],
+                                   self.current_round
+                               )
+                               print("aggr_valid_loss", aggr_valid_loss)
+                               print("aggr_valid_accuracy", aggr_valid_accuracy)
+
+                           #stop and eval based on loss
+                           if self.global_model.prev_train_loss is not None and \
+                                   (self.global_model.prev_train_loss - aggr_train_loss) / self.global_model.prev_train_loss < 0.01 and \
+                                   aggr_valid_accuracy > 0.5:                        
+                               # converges
+                               print("converges! starting test phase..")
+                               self.stop_and_eval()
+                               return
+
+                           self.global_model.prev_train_loss = aggr_train_loss
+
+                           if self.current_round >= FLServer.MAX_NUM_ROUNDS or aggr_valid_accuracy > 0.98 :
+                               self.stop_and_eval()
+                           else:
+                               self.train_next_round()
 
         @self.socketio.on('client_eval')
         def handle_client_eval(data):
