@@ -299,7 +299,7 @@ class FLServer(object):
                     # because the valid isn't calcu every time before so it needs if condition
                      
                     #print("self.current_round_client_updates[0]--------------------------------------------",self.current_round_client_updates[0])
-                    print("--------------------------------------------self.current_round_client_updates.size",self.current_round_client_updates.size)
+                    print("--------------------------------------------self.current_round_client_updates.size",len(self.current_round_client_updates))
                     print("--------------------------------------------self.current_round_client_updates[0]",self.current_round_client_updates[0])
                     #print("--------------------------------------------valid_loss",valid_loss)                    
                                                                                  
