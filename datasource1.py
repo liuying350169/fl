@@ -35,7 +35,7 @@ class Mnist(DataSource):
 
     ##IID = False
     IID = True
-    MAX_NUM_CLASSES_PER_CLIENT = 9
+    MAX_NUM_CLASSES_PER_CLIENT = 10
     
     def __init__(self):
 
