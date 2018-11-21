@@ -298,6 +298,9 @@ class FLServer(object):
                     ###error index out of range
                     if 'valid_loss' in self.current_round_client_updates[0]:
                         aggr_valid_loss, aggr_valid_accuracy = self.global_model.aggregate_valid_loss_accuracy(
+                            #liuying x['valid_loss'] for x in self.current_round_client_updates 
+                            #error list index out of range 
+                            #message handler error 
                             [x['valid_loss'] for x in self.current_round_client_updates],
                             [x['valid_accuracy'] for x in self.current_round_client_updates],
                             [x['valid_size'] for x in self.current_round_client_updates],
