@@ -323,7 +323,7 @@ class FLServer(object):
                     
                     self.global_model.prev_train_loss = aggr_train_loss
 
-                    if self.current_round >= FLServer.MAX_NUM_ROUNDS:
+                    if self.current_round >= FLServer.MAX_NUM_ROUNDS or aggr_valid_accuracy > 0.98 :
                         self.stop_and_eval()
                     else:
                         self.train_next_round()
