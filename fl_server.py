@@ -75,8 +75,15 @@ class GlobalModel(object):
                         new_weights[i] = client_weights[c][i]
         self.current_weights = new_weights
         print("GlobalModel update_weights")
-
-
+              
+              
+#liuying if use break mode then  should change the total_size 
+#         for c in range(len(client_weights)):
+#             for i in range(len(new_weights)):
+#                 if(isinstance(client_weights[c][i],unicode)):
+#                     total_size -= client_sizes[c]
+#                     break;
+              
 #         for c in range(len(client_weights)):
 #             #if(c==current_round):
 #             if(1):
