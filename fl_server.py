@@ -277,7 +277,7 @@ class FLServer(object):
                 
                 # tolerate 30% unresponsive clients
                 if len(self.current_round_client_updates) == FLServer.NUM_CLIENTS_CONTACTED_PER_ROUND * 1:                   
-                    time.sleep(1)                   
+                    time.sleep(5)                   
                     self.global_model.update_weights(
                         [x['weights'] for x in self.current_round_client_updates],
                         [x['train_size'] for x in self.current_round_client_updates],
