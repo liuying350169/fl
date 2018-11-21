@@ -12,20 +12,17 @@ class DataSource(object):
     def sample_single_non_iid(self, weight=None):
         raise NotImplementedError()
 
-# NUM_CLASS = 1000
 # NUM_CLASS_BIG = 2000
 # NUM_CLASS_LITTLE = 100
 # BASE_SELECT = 0
 # CLASS_WEIGHT = [0.42,0.42,0.02,0.02,0.02,0.02,0.02,0.02,0.02,0.02]
-#CLASS_WEIGHT = [0.5,0.5,0,0,0,0,0,0,0,0]
+#CLASS_WEIGHT = [0,0,0,0,0,0,0,0,0.5,0.5]
 
-# NUM_CLASS = 1000
 # NUM_CLASS_BIG = 2000
 # NUM_CLASS_LITTLE = 1000
 # BASE_SELECT = 0
 # CLASS_WEIGHT = [0.02,0.02,0.02,0.02,0.02,0.02,0.02,0.02,0.42,0.42]
 
-NUM_CLASS = 1000
 NUM_CLASS_BIG = 2000
 NUM_CLASS_LITTLE = 1000
 BASE_SELECT = 400
