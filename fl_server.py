@@ -54,51 +54,51 @@ class GlobalModel(object):
         #total_size is not number
        
        
-       #liuying change selection 
-       #1: continue mode
-       #2: condidate the error weights
-        for c in range(len(client_weights)):            
-            if(c==(current_round%5)):
-                print("c=",c,"round =",current_round)
-                for i in range(len(new_weights)):                    
-                    if(isinstance(client_weights[c][i],unicode)):
-                        if(not isinstance(client_weights[c-1][i],unicode)):
-                            new_weights[i] = client_weights[c-1][i]
-                        else:
-                            if(not isinstance(client_weights[c+1][i],unicode)):
-                                new_weights[i] = client_weights[c+1][i]
-                            else:
-                                new_weights[i] = client_weights[c-2][i]
+#        #liuying change selection 
+#        #1: continue mode
+#        #2: condidate the error weights
+#         for c in range(len(client_weights)):            
+#             if(c==(current_round%5)):
+#                 print("c=",c,"round =",current_round)
+#                 for i in range(len(new_weights)):                    
+#                     if(isinstance(client_weights[c][i],unicode)):
+#                         if(not isinstance(client_weights[c-1][i],unicode)):
+#                             new_weights[i] = client_weights[c-1][i]
+#                         else:
+#                             if(not isinstance(client_weights[c+1][i],unicode)):
+#                                 new_weights[i] = client_weights[c+1][i]
+#                             else:
+#                                 new_weights[i] = client_weights[c-2][i]
                         
-                    else:
-                        #new_weights[i] += client_weights[c][i] * client_sizes[c] / total_size
-                        new_weights[i] = client_weights[c][i]
-        self.current_weights = new_weights
-        print("GlobalModel update_weights")
+#                     else:
+#                         #new_weights[i] += client_weights[c][i] * client_sizes[c] / total_size
+#                         new_weights[i] = client_weights[c][i]
+#         self.current_weights = new_weights
+#         print("GlobalModel update_weights")
               
               
 #liuying if use break mode then  should change the total_size 
 
 
-#         for c in range(len(client_weights)):
-#             for i in range(len(new_weights)):
-#                 if(isinstance(client_weights[c][i],unicode)):
-#                     total_size -= client_sizes[c]
-#                     break;              
-#         for c in range(len(client_weights)):
-#             #if(c==current_round):
-#             if(1):
-#                 print("c=",c,"round =",current_round)
-#                 for i in range(len(new_weights)):               
-#                     if(isinstance(client_weights[c][i],unicode)):
-#                         print("continue")
-#                         continue
-#                     else:
+        for c in range(len(client_weights)):
+            for i in range(len(new_weights)):
+                if(isinstance(client_weights[c][i],unicode)):
+                    total_size -= client_sizes[c]
+                    break;              
+        for c in range(len(client_weights)):
+            #if(c==current_round):
+            if(1):
+                print("c=",c,"round =",current_round)
+                for i in range(len(new_weights)):               
+                    if(isinstance(client_weights[c][i],unicode)):
+                        print("continue")
+                        continue
+                    else:
 
-#                         new_weights[i] += client_weights[c][i] * client_sizes[c] / total_size
+                        new_weights[i] += client_weights[c][i] * client_sizes[c] / total_size
 
-#         self.current_weights = new_weights
-#         print("GlobalModel update_weights")
+        self.current_weights = new_weights
+        print("GlobalModel update_weights")
 
 
 
