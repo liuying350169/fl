@@ -130,6 +130,8 @@ class FederatedClient(object):
 
         def on_disconnect():
             print('disconnect')
+            #liuying add self.sio.disconnect(true) try to figuer the useship
+            self.sio.disconnect(true)
 
         def on_reconnect():
             print('reconnect')
