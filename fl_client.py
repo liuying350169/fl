@@ -88,6 +88,7 @@ class LocalModel(object):
 # it contributes to the global model by sending its local gradients.
 
 class FederatedClient(object):
+    #liuying MAX_DATASET_SIZE_KEPT from 1200 change to MAX_Trainset
     MAX_DATASET_SIZE_KEPT = MAX_Trainset
 
     def __init__(self, server_host, server_port, datasource):
