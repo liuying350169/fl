@@ -309,7 +309,7 @@ class FLServer(object):
                     #stop and eval based on loss
                     if self.global_model.prev_train_loss is not None and \
                             (self.global_model.prev_train_loss - aggr_train_loss) / self.global_model.prev_train_loss < 0.01 and \
-                            aggr_valid_accuracy > 0.5::                        
+                            aggr_valid_accuracy > 0.5:                        
                         # converges
                         print("converges! starting test phase..")
                         self.stop_and_eval()
