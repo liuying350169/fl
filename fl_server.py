@@ -52,7 +52,11 @@ class GlobalModel(object):
         new_weights = [np.zeros(w.shape) for w in self.current_weights]
         total_size = np.sum(client_sizes)
         #total_size is not number
-        
+       
+       
+       #liuying change selection 
+       #1: continue mode
+       #2: condidate the error weights
         for c in range(len(client_weights)):            
             if(c==(current_round%5)):
                 print("c=",c,"round =",current_round)
