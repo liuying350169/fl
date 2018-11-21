@@ -306,12 +306,16 @@ class FLServer(object):
                             [x['valid_size'] for x in self.current_round_client_updates],
                             self.current_round
                         )
+                            
+                        print("self.current_round",self.current_round)
                         print("aggr_valid_loss", aggr_valid_loss)
                         print("aggr_valid_accuracy", aggr_valid_accuracy)
                         
                     #stop and eval based on loss
+                    #avoid converge in low accuracy 
                     if self.global_model.prev_train_loss is not None and \
-                            (self.global_model.prev_train_loss - aggr_train_loss) / self.global_model.prev_train_loss < 0.01:                        
+                            (self.global_model.prev_train_loss - aggr_train_loss) / self.global_model.prev_train_loss < 0.01 and \
+                            aggr_valid_accuracy > 0.5:                        
                         # converges
                         print("converges! starting test phase..")
                         self.stop_and_eval()
@@ -340,6 +344,7 @@ class FLServer(object):
                     [x['test_accuracy'] for x in self.eval_client_updates],
                     [x['test_size'] for x in self.eval_client_updates],
                 );
+                print("self.current_round",self.current_round)
                 print("\naggr_test_loss", aggr_test_loss)
                 print("aggr_test_accuracy", aggr_test_accuracy)
                 print("== done ==")
