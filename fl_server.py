@@ -295,7 +295,16 @@ class FLServer(object):
                     print("aggr_train_loss", aggr_train_loss)
                     print("aggr_train_accuracy", aggr_train_accuracy)
 
-                    ###error index out of range
+                    ###error index out of range 
+                    # because the valid isn't calcu every time before so it needs if condition
+                     
+                    print("--------------------------------------------self.current_round_client_updates[0]",self.current_round_client_updates[0])
+                    
+                    
+                    for o in self.current_round_client_updates:
+                        print("self.current_round_client_updates[",o,"]",self.current_round_client_updates[o])                     
+                     
+                     
                     if 'valid_loss' in self.current_round_client_updates[0]:
                         aggr_valid_loss, aggr_valid_accuracy = self.global_model.aggregate_valid_loss_accuracy(
                             [x['valid_loss'] for x in self.current_round_client_updates],
