@@ -151,6 +151,7 @@ class Mnist(DataSource):
     # returns: 28 * 28, 1
     def sample_single_non_iid(self, x, y, weight=None):
         # first pick class, then pick a datapoint at random
+        #liuying fix fen bu, CLASS_WEIGHT
         chosen_class = np.random.choice(self.classes,p=CLASS_WEIGHT)
         #print(chosen_class)
         candidates_idx = np.array([i for i in range(y.shape[0]) if y[i] == chosen_class])
@@ -167,6 +168,7 @@ class Mnist(DataSource):
                 else self.gen_dummy_non_iid_weights()
         
         #train_size = random.randint(min_train, max_train)
+        #liuying fix the train_size jie jue unbalance problem
         train_size = max_train
         test_size = int(train_size / data_split[0] * data_split[1])
         valid_size = int(train_size / data_split[0] * data_split[2])
