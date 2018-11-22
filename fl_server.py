@@ -420,6 +420,6 @@ if __name__ == '__main__':
     # is used if available, else the gevent web server is used.
     print("fl_server __main__")
     server = FLServer(GlobalModel_MNIST_CNN, "172.17.0.2",1111)
-    print("listening on "172.17.0.2",1111")
+    print("listening on 172.17.0.2,1111")
     server.start()
 
