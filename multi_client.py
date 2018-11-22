@@ -9,34 +9,34 @@ import threading
 
 def start_client1():
     print("start client1")
-    c = FederatedClient("172.31.14.70", 5000, datasource1.Mnist)
+    c = FederatedClient("172.31.14.71", 5001, datasource1.Mnist)
 def start_client2():
     print("start client2")
-    c = FederatedClient("172.31.14.70", 5000, datasource2.Mnist)
+    c = FederatedClient("172.31.14.71", 5001, datasource2.Mnist)
 def start_client3():
     print("start client3")
-    c = FederatedClient("172.31.14.70", 5000, datasource3.Mnist)
+    c = FederatedClient("172.31.14.71", 5001, datasource3.Mnist)
 def start_client4():
     print("start client4")
-    c = FederatedClient("172.31.14.70", 5000, datasource4.Mnist)
+    c = FederatedClient("172.31.14.71", 5001, datasource4.Mnist)
 def start_client5():
     print("start client5")
-    c = FederatedClient("172.31.14.70", 5000, datasource5.Mnist)
+    c = FederatedClient("172.31.14.71", 5001, datasource5.Mnist)
 def start_client6():
     print("start client6")
-    c = FederatedClient("172.31.14.70", 5000, datasource1.Mnist)
+    c = FederatedClient("172.31.14.71", 5001, datasource1.Mnist)
 def start_client7():
     print("start client7")
-    c = FederatedClient("172.31.14.70", 5000, datasource2.Mnist)
+    c = FederatedClient("172.31.14.71", 5001, datasource2.Mnist)
 def start_client8():
     print("start client8")
-    c = FederatedClient("172.31.14.70", 5000, datasource3.Mnist)
+    c = FederatedClient("172.31.14.71", 5001, datasource3.Mnist)
 def start_client9():
     print("start client9")
-    c = FederatedClient("172.31.14.70", 5000, datasource4.Mnist)
+    c = FederatedClient("172.31.14.71", 5001, datasource4.Mnist)
 def start_client0():
     print("start client0")
-    c = FederatedClient("172.31.14.70", 5000, datasource5.Mnist)
+    c = FederatedClient("172.31.14.71", 5001, datasource5.Mnist)
     
     
 if __name__ == '__main__':
