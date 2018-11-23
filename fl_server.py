@@ -100,7 +100,17 @@ class GlobalModel(object):
         self.current_weights = new_weights
         print("GlobalModel update_weights")
 
-
+    def aggregate_loss_accuracy1(self, client_losses, client_accuracies, client_sizes):
+        total_size = np.sum(client_sizes)
+        # weighted sum
+        aggr_loss = np.min(client_losses[i]
+                for i in range(len(client_sizes)))
+              
+        aggr_accuraries = np.max(client_accuracies[i]
+                for i in range(len(client_sizes)))
+       
+        print("GlobalModel aggregate_loss_accuracy")
+        return aggr_loss, aggr_accuraries
 
     def aggregate_loss_accuracy(self, client_losses, client_accuracies, client_sizes):
         total_size = np.sum(client_sizes)
@@ -350,7 +360,7 @@ class FLServer(object):
 
             # tolerate 30% unresponsive clients
             if len(self.eval_client_updates) == FLServer.NUM_CLIENTS_CONTACTED_PER_ROUND * 1:
-                aggr_test_loss, aggr_test_accuracy = self.global_model.aggregate_loss_accuracy(
+                aggr_test_loss, aggr_test_accuracy = self.global_model.aggregate_loss_accuracy1(
                     [x['test_loss'] for x in self.eval_client_updates],
                     [x['test_accuracy'] for x in self.eval_client_updates],
                     [x['test_size'] for x in self.eval_client_updates],
