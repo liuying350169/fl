@@ -409,7 +409,7 @@ if __name__ == '__main__':
     # and configured properly inside socketio.run(). In production mode the eventlet web server
     # is used if available, else the gevent web server is used.
     print("fl_server __main__")
-    server = FLServer(GlobalModel_MNIST_CNN, "172.31.0.139", 1111)
-    print("listening on 172.31.0.139:1111");
+    server = FLServer(GlobalModel_MNIST_CNN, "172.31.0.139", 55555)
+    print("listening on 172.31.0.139:55555");
     server.start()
 
