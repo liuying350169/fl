@@ -11,7 +11,7 @@ from fl_server import obj_to_pickle_string, pickle_string_to_obj
 
 import datasource
 import threading
-MAX_Trainset = 10000-1
+MAX_Trainset = 5000
 
 class LocalModel(object):
     def __init__(self, model_config, data_collected):
@@ -231,6 +231,6 @@ class FederatedClient(object):
 
 if __name__ == "__main__":
     print("fl_clients__main__")
-    FederatedClient("172.17.0.2", 1111, datasource.Mnist)
+    FederatedClient("172.31.0.139", 1111, datasource.Mnist)
 
 
