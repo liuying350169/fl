@@ -231,6 +231,6 @@ class FederatedClient(object):
 
 if __name__ == "__main__":
     print("fl_clients__main__")
-    FederatedClient("172.31.0.139", 1111, datasource.Mnist)
+    FederatedClient("172.31.0.139", 55555, datasource.Mnist)
 
 
