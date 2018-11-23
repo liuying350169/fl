@@ -11,7 +11,7 @@ from fl_server import obj_to_pickle_string, pickle_string_to_obj
 
 import datasource
 import threading
-MAX_Trainset = 5000
+MAX_Trainset = 1200
 
 class LocalModel(object):
     def __init__(self, model_config, data_collected):
