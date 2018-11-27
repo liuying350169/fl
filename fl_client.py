@@ -5,6 +5,7 @@ import time
 import json
 import pickle
 import codecs
+import tensorflow as tf
 from keras.models import model_from_json
 from socketIO_client import SocketIO, LoggingNamespace
 from fl_server import obj_to_pickle_string, pickle_string_to_obj
@@ -12,6 +13,7 @@ from fl_server import obj_to_pickle_string, pickle_string_to_obj
 import datasource
 import threading
 MAX_Trainset = 10000-1
+
 
 class LocalModel(object):
     def __init__(self, model_config, data_collected):
@@ -230,7 +232,11 @@ class FederatedClient(object):
 
 
 if __name__ == "__main__":
-    print("fl_clients__main__")
-    FederatedClient("172.17.0.2", 1111, datasource.Mnist)
+    
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+    with tf.Session(config=config) as sess:
+        print("fl_clients__main__")
+        FederatedClient("172.17.0.2", 1111, datasource.Mnist)
 
 
