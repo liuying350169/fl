@@ -1,4 +1,5 @@
 from fl_client import FederatedClient
+imprort tensorflow as tf
 import datasource1
 import datasource2
 import datasource3
@@ -40,30 +41,33 @@ def start_client0():
     
     
 if __name__ == '__main__':
-    jobs = []
-    tar = "start_client"
-    for i in range(1,7):
-        # threading.Thread(target=start_client).start()
-        if i==1:
-            p = multiprocessing.Process(target=start_client1)
-        if i==2:
-            p = multiprocessing.Process(target=start_client2)
-        if i==3:
-            p = multiprocessing.Process(target=start_client3)
-        if i==4:
-            p = multiprocessing.Process(target=start_client4)
-        if i==5:
-            p = multiprocessing.Process(target=start_client5)
-        if i==6:
-            p = multiprocessing.Process(target=start_client6)
-        if i==7:
-            p = multiprocessing.Process(target=start_client7)
-        if i==8:
-            p = multiprocessing.Process(target=start_client8)
-        if i==9:
-            p = multiprocessing.Process(target=start_client9)
-        if i==10:
-            p = multiprocessing.Process(target=start_client0)            
-        jobs.append(p)
-        p.start()
-    # TODO: randomly kill
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+    with tf.Session(config=config) as sess:
+        jobs = []
+        tar = "start_client"
+        for i in range(1,7):
+            # threading.Thread(target=start_client).start()
+            if i==1:
+                p = multiprocessing.Process(target=start_client1)
+            if i==2:
+                p = multiprocessing.Process(target=start_client2)
+            if i==3:
+                p = multiprocessing.Process(target=start_client3)
+            if i==4:
+                p = multiprocessing.Process(target=start_client4)
+            if i==5:
+                p = multiprocessing.Process(target=start_client5)
+            if i==6:
+                p = multiprocessing.Process(target=start_client6)
+            if i==7:
+                p = multiprocessing.Process(target=start_client7)
+            if i==8:
+                p = multiprocessing.Process(target=start_client8)
+            if i==9:
+                p = multiprocessing.Process(target=start_client9)
+            if i==10:
+                p = multiprocessing.Process(target=start_client0)            
+            jobs.append(p)
+            p.start()
+        # TODO: randomly kill
