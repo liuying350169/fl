@@ -408,8 +408,11 @@ if __name__ == '__main__':
     # When the application is in debug mode the Werkzeug development server is still used
     # and configured properly inside socketio.run(). In production mode the eventlet web server
     # is used if available, else the gevent web server is used.
-    print("fl_server __main__")
-    server = FLServer(GlobalModel_MNIST_CNN, "172.17.0.2", 1111)
-    print("listening on 172.17.0.2:1111");
-    server.start()
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+    with tf.Session(config=config) as sess:
+           print("fl_server __main__")
+           server = FLServer(GlobalModel_MNIST_CNN, "172.17.0.2", 1111)
+           print("listening on 172.17.0.2:1111");
+           server.start()
 
