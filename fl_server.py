@@ -177,9 +177,9 @@ class GlobalModel_MNIST_CNN(GlobalModel):
 
 class FLServer(object):
     
-    MIN_NUM_WORKERS = 6
+    MIN_NUM_WORKERS = 3
     MAX_NUM_ROUNDS = 20
-    NUM_CLIENTS_CONTACTED_PER_ROUND = 6
+    NUM_CLIENTS_CONTACTED_PER_ROUND = 3
     ROUNDS_BETWEEN_VALIDATIONS = 1
 
     def __init__(self, global_model, host, port):
