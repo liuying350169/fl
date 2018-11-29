@@ -295,6 +295,10 @@ class FLServer(object):
 
                     print("aggr_train_loss", aggr_train_loss)
                     print("aggr_train_accuracy", aggr_train_accuracy)
+              
+                    #liuying before error directly converge
+                    if(len(self.current_round_client_updates)==0):
+                        self.stop_and_eval()
 
                     ###error index out of range
                     if 'valid_loss' in self.current_round_client_updates[0]:
