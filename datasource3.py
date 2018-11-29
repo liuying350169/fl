@@ -1,6 +1,7 @@
 import numpy as np
 import keras
 import random
+import tensorflow as tf
 from keras.datasets import mnist
 from keras import backend as K
 
@@ -181,13 +182,16 @@ class Mnist(DataSource):
 
 
 if __name__ == "__main__":
-    m = Mnist()
-    # res = m.partitioned_by_rows(9)
-    # print(res["test"][1].shape)
-    print("Mnist __main__")
-    #m.fake_non_iid_data()
-    for _ in range(10):
-        print(m.gen_dummy_non_iid_weights())
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+    with tf.Session(config=config) as sess:    
+        m = Mnist()
+        # res = m.partitioned_by_rows(9)
+        # print(res["test"][1].shape)
+        print("Mnist __main__")
+        #m.fake_non_iid_data()
+        for _ in range(10):
+            print(m.gen_dummy_non_iid_weights())
 
 
 
