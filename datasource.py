@@ -42,7 +42,6 @@ class DatasetSplit(Dataset):
         return image, label
 
 class Mnist_noniid():
-    IID = True
     MAX_NUM_CLASSES_PER_CLIENT = 5
     BATCH_SIZE = 100
     NUM_USERS = 3
@@ -84,10 +83,14 @@ class Mnist_noniid():
 
 
 
-        self.test_data = datasets.MNIST(root='./mnist/', train=False, transform=transforms.ToTensor())
+        self.test_data = datasets.MNIST(root='./mnist/', train=False,
+                                        transform=transforms.Compose([
+                           transforms.ToTensor(),
+                           transforms.Normalize((0.1307,), (0.3081,))
+                       ]))
         idxs = np.arange(len(self.test_data))
         print(idxs)
-        labels = self.train_data.train_labels.numpy()
+        labels = self.test_data.test_labels.numpy()
         print(labels)
 
         idxs_labels = np.vstack((idxs, labels))
