@@ -1,6 +1,6 @@
 import torch
 import torch.distributed.deprecated as dist
-from datasource import Mnist
+from datasource import Mnist, Mnist_noniid
 import model
 import time
 import copy
@@ -8,6 +8,7 @@ from torch.multiprocessing import Process
 
 MAX_EPOCH = 50
 LR = 0.001
+IID = True
 
 
 def get_new_model(model):
@@ -27,9 +28,27 @@ def run(size, rank):
     # size = dist.get_world_size()
     # rank = dist.get_rank()
 
-    train_loader = Mnist().get_train_data()
+    if(IID == True):
+        train_loader = Mnist().get_train_data()
+        test_data = Mnist().get_test_data()
+    else:
+        if(rank > 0):
+            if(rank == 1):
+                train_loader = Mnist_noniid().get_train_data1()
+                test_data = Mnist_noniid().get_test_data1()
+            if(rank == 2):
+                train_loader = Mnist_noniid().get_train_data2()
+                test_data = Mnist_noniid().get_test_data2()
+            if(rank == 3):
+                train_loader = Mnist_noniid().get_train_data3()
+                test_data = Mnist_noniid().get_test_data3()
+            if(rank == 4):
+                train_loader = Mnist_noniid().get_train_data4()
+                test_data = Mnist_noniid().get_test_data4()
+            if(rank == 5):
+                train_loader = Mnist_noniid().get_train_data5()
+                test_data = Mnist_noniid().get_test_data5()
 
-    test_data = Mnist().get_test_data()
     test_x = torch.unsqueeze(test_data.test_data, dim=1).type(
         torch.FloatTensor) / 255.  # shape from (2000, 28, 28) to (2000, 1, 28, 28), value in range(0,1)
     test_y = test_data.test_labels

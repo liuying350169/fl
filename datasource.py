@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+from torch.utils.data import DataLoader, Dataset
 from torchvision import datasets, transforms 
 
 class Mnist():
@@ -9,14 +10,6 @@ class Mnist():
 
 
     def __init__(self):
-        # use numpy
-        path_np = './mnist.npz'
-        f = np.load(path_np)
-        x_train, y_train = f['x_train'], f['y_train']
-        x_test, y_test = f['x_test'], f['y_test']
-        f.close()
-
-
 
         self.train_data = datasets.MNIST(root='./mnist/', train=True, transform=transforms.ToTensor(), download=True)
         self.test_data = datasets.MNIST(root='./mnist/', train=False, transform=transforms.ToTensor())
@@ -25,85 +18,133 @@ class Mnist():
         self.train_loader = torch.utils.data.DataLoader(dataset=self.train_data, batch_size=Mnist.BATCH_SIZE, shuffle=True)
         self.test_loader = torch.utils.data.DataLoader(dataset=self.test_data, batch_size=Mnist.BATCH_SIZE, shuffle=True)
 
-    def mnsit_noniid(dataset, num_users):
-        """
-        Sample non-I.I.D client data from MNIST dataset
-        :param dataset:
-        :param num_users:
-        :return:
-        """
-        num_shards, num_imgs = 200, 300
-        # num_shards is 200, and idx_shard is 0-199
-        idx_shard = [i for i in range(num_shards)]
-        # print(idx_shard)
-        # dict_users is range in num_users  default is 100   type is dictionary
-        # 100 ge np array
-        dict_users = {i: np.array([]) for i in range(num_users)}
-        # print(len(dict_users),dict_users)
-        # idxs = 60000, 60000 is devide into 200 parts, and 300 images each part
-        # idxs = 1-59999
-        idxs = np.arange(num_shards * num_imgs)
-        # print(idxs)
-
-        # labels is dataset's label
-        # len is 60000
-        # it is real label
-        labels = dataset.train_labels.numpy()
-        # print(len(labels))
-        # for i in labels:
-        #     print(labels[i])
-
-        # sort labels
-        # idxs_labels is the match between 0-59999 and the real labels of dataset
-        idxs_labels = np.vstack((idxs, labels))
-        # print(idxs_labels)
-
-        # change into arrange depend on the arrange of labels
-        idxs_labels = idxs_labels[:, idxs_labels[1, :].argsort()]
-        # print(idxs_labels)
-
-        # finally the idxs arrange to labels
-        # new ids
-        # [30207  5662 55366 ... 23285 15728 11924]
-        idxs = idxs_labels[0, :]
-        # print(idxs)
-
-        print(idx_shard)
-        # divide and assign
-        # 100 ge users
-        for i in range(num_users):
-            # select 2 parts from dataset for every num_users
-            # use p a2 = np.random.choice(a=5, size=3, replace=False, p=[0.2, 0.1, 0.3, 0.4, 0.0])
-            rand_set = set(np.random.choice(idx_shard, 2, replace=False))
-            # print(rand_set)
-            idx_shard = list(set(idx_shard) - rand_set)
-            print(idx_shard)
-            for rand in rand_set:
-                dict_users[i] = np.concatenate((dict_users[i], idxs[rand * num_imgs:(rand + 1) * num_imgs]), axis=0)
-        # print(len(dict_users[0]))
-        # finally return each user have which 600 images ,every user have a array contain 600 ge number
-        return dict_users
-
-    def mnist_iid(dataset, num_users):
-        """
-        Sample I.I.D. client data from MNIST dataset
-        :param dataset:
-        :param num_users:
-        :return: dict of image index
-        """
-        num_items = int(len(dataset) / num_users)
-        dict_users, all_idxs = {}, [i for i in range(len(dataset))]
-        for i in range(num_users):
-            dict_users[i] = set(np.random.choice(all_idxs, num_items, replace=False))
-            all_idxs = list(set(all_idxs) - dict_users[i])
-        return dict_users
 
     def get_train_data(self):
-
-
         return self.train_loader
+
     def get_test_data(self):
-
-
-
         return self.test_data
+
+class DatasetSplit(Dataset):
+    def __init__(self, dataset, idxs):
+        self.dataset = dataset
+        self.idxs = list(idxs)
+
+    def __len__(self):
+        return len(self.idxs)
+
+    def __getitem__(self, item):
+        #error liuying
+        #only integers, slices (`:`), ellipsis (`...`), None and long or byte Variables are valid indices (got numpy.float64)
+        #print("item",item)
+        #print("self.idxs[item]",self.idxs[item])
+        image, label = self.dataset[int(self.idxs[item])]
+        return image, label
+
+class Mnist_noniid():
+    IID = True
+    MAX_NUM_CLASSES_PER_CLIENT = 5
+    BATCH_SIZE = 100
+    NUM_USERS = 3
+
+
+    def __init__(self):
+
+        self.train_data = datasets.MNIST('./mnist/', train=True, download=True,
+                       transform=transforms.Compose([
+                           transforms.ToTensor(),
+                           transforms.Normalize((0.1307,), (0.3081,))
+                       ]))
+        idxs = np.arange(len(self.train_data))
+        print(idxs)
+        labels = self.train_data.train_labels.numpy()
+        print(labels)
+
+        idxs_labels = np.vstack((idxs, labels))
+        print(idxs_labels)
+
+        idxs_labels = idxs_labels[  :  , idxs_labels[1, :].argsort()]
+        print(idxs_labels)
+
+        idxs = idxs_labels[0, :]
+        print(idxs)
+        #idxs is the rank arrange according to class
+        p1 = idxs[0:12000]
+        p2 = idxs[12000:24000]
+        p3 = idxs[24000:36000]
+        p4 = idxs[36000:48000]
+        p5 = idxs[48000:60000]
+
+
+        self.part1 = DataLoader(DatasetSplit(self.train_data, p1), batch_size=Mnist.BATCH_SIZE, shuffle=True)
+        self.part2 = DataLoader(DatasetSplit(self.train_data, p2), batch_size=Mnist.BATCH_SIZE, shuffle=True)
+        self.part3 = DataLoader(DatasetSplit(self.train_data, p3), batch_size=Mnist.BATCH_SIZE, shuffle=True)
+        self.part4 = DataLoader(DatasetSplit(self.train_data, p4), batch_size=Mnist.BATCH_SIZE, shuffle=True)
+        self.part5 = DataLoader(DatasetSplit(self.train_data, p5), batch_size=Mnist.BATCH_SIZE, shuffle=True)
+
+
+
+        self.test_data = datasets.MNIST(root='./mnist/', train=False, transform=transforms.ToTensor())
+        idxs = np.arange(len(self.test_data))
+        print(idxs)
+        labels = self.train_data.train_labels.numpy()
+        print(labels)
+
+        idxs_labels = np.vstack((idxs, labels))
+        print(idxs_labels)
+
+        idxs_labels = idxs_labels[  :  , idxs_labels[1, :].argsort()]
+        print(idxs_labels)
+
+        idxs = idxs_labels[0, :]
+        print(idxs)
+        p1 = idxs[0:2000]
+        p2 = idxs[2000:4000]
+        p3 = idxs[4000:6000]
+        p4 = idxs[6000:8000]
+        p5 = idxs[8000:10000]
+
+        self.testpart1 = DataLoader(DatasetSplit(self.test_data, p1), batch_size=Mnist.BATCH_SIZE, shuffle=True)
+        self.testpart2 = DataLoader(DatasetSplit(self.test_data, p2), batch_size=Mnist.BATCH_SIZE, shuffle=True)
+        self.testpart3 = DataLoader(DatasetSplit(self.test_data, p3), batch_size=Mnist.BATCH_SIZE, shuffle=True)
+        self.testpart4 = DataLoader(DatasetSplit(self.test_data, p4), batch_size=Mnist.BATCH_SIZE, shuffle=True)
+        self.testpart5 = DataLoader(DatasetSplit(self.test_data, p5), batch_size=Mnist.BATCH_SIZE, shuffle=True)
+
+        #init
+        #self.train_loader = torch.utils.data.DataLoader(dataset=self.train_data, batch_size=Mnist.BATCH_SIZE, shuffle=True)
+        #self.test_loader = torch.utils.data.DataLoader(dataset=self.test_data, batch_size=Mnist.BATCH_SIZE, shuffle=True)
+
+    def get_train_data1(self):
+        return self.part1
+    def get_train_data2(self):
+        return self.part2
+    def get_train_data3(self):
+        return self.part3
+    def get_train_data4(self):
+        return self.part4
+    def get_train_data5(self):
+        return self.part5
+
+    def get_test_data1(self):
+        return self.testpart1
+    def get_test_data2(self):
+        return self.testpart2
+    def get_test_data3(self):
+        return self.testpart3
+    def get_test_data4(self):
+        return self.testpart4
+    def get_test_data5(self):
+        return self.testpart5
+
+
+if __name__ == '__main__':
+    dataset_train = datasets.MNIST('./mnist/', train=True, download=True,
+                                   transform=transforms.Compose([
+                                       transforms.ToTensor(),
+                                       transforms.Normalize((0.1307,), (0.3081,))
+                                   ]))
+    num = 100
+    m = Mnist_noniid()
+    #m.mnist_noniid(dataset_train, num)
+    m.get_train_data1()
+    print("good")
