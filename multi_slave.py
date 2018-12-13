@@ -6,7 +6,7 @@ import time
 import copy
 from torch.multiprocessing import Process
 
-MAX_EPOCH = 50
+MAX_EPOCH = 500
 LR = 0.001
 IID = False
 
