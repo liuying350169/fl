@@ -8,7 +8,6 @@ class Mnist():
     MAX_NUM_CLASSES_PER_CLIENT = 5
     BATCH_SIZE = 100
 
-
     def __init__(self):
 
         self.train_data = datasets.MNIST(root='./mnist/', train=True, transform=transforms.ToTensor(), download=True)
@@ -18,12 +17,12 @@ class Mnist():
         self.train_loader = torch.utils.data.DataLoader(dataset=self.train_data, batch_size=Mnist.BATCH_SIZE, shuffle=True)
         self.test_loader = torch.utils.data.DataLoader(dataset=self.test_data, batch_size=Mnist.BATCH_SIZE, shuffle=True)
 
-
     def get_train_data(self):
         return self.train_loader
 
     def get_test_data(self):
         return self.test_data
+
 
 class DatasetSplit(Dataset):
     def __init__(self, dataset, idxs):
@@ -41,11 +40,12 @@ class DatasetSplit(Dataset):
         image, label = self.dataset[int(self.idxs[item])]
         return image, label
 
+
 class Mnist_noniid():
+    IID = True
     MAX_NUM_CLASSES_PER_CLIENT = 5
     BATCH_SIZE = 100
     NUM_USERS = 3
-
 
     def __init__(self):
 
@@ -55,18 +55,13 @@ class Mnist_noniid():
                            transforms.Normalize((0.1307,), (0.3081,))
                        ]))
         idxs = np.arange(len(self.train_data))
-        print(idxs)
         labels = self.train_data.train_labels.numpy()
-        print(labels)
 
         idxs_labels = np.vstack((idxs, labels))
-        print(idxs_labels)
 
         idxs_labels = idxs_labels[  :  , idxs_labels[1, :].argsort()]
-        print(idxs_labels)
 
         idxs = idxs_labels[0, :]
-        print(idxs)
         #idxs is the rank arrange according to class
         p1 = idxs[0:12000]
         p2 = idxs[12000:24000]
@@ -83,35 +78,26 @@ class Mnist_noniid():
 
 
 
-        self.test_data = datasets.MNIST(root='./mnist/', train=False,
-                                        transform=transforms.Compose([
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.1307,), (0.3081,))
-                       ]))
+        self.test_data = datasets.MNIST(root='./mnist/', train=False, transform=transforms.ToTensor())
         idxs = np.arange(len(self.test_data))
-        print(idxs)
         labels = self.test_data.test_labels.numpy()
-        print(labels)
 
         idxs_labels = np.vstack((idxs, labels))
-        print(idxs_labels)
 
-        idxs_labels = idxs_labels[  :  , idxs_labels[1, :].argsort()]
-        print(idxs_labels)
+        #idxs_labels = idxs_labels[  :  , idxs_labels[1, :].argsort()]
 
         idxs = idxs_labels[0, :]
-        print(idxs)
         p1 = idxs[0:2000]
         p2 = idxs[2000:4000]
         p3 = idxs[4000:6000]
         p4 = idxs[6000:8000]
         p5 = idxs[8000:10000]
 
-        self.testpart1 = DataLoader(DatasetSplit(self.test_data, p1), batch_size=Mnist.BATCH_SIZE, shuffle=True)
-        self.testpart2 = DataLoader(DatasetSplit(self.test_data, p2), batch_size=Mnist.BATCH_SIZE, shuffle=True)
-        self.testpart3 = DataLoader(DatasetSplit(self.test_data, p3), batch_size=Mnist.BATCH_SIZE, shuffle=True)
-        self.testpart4 = DataLoader(DatasetSplit(self.test_data, p4), batch_size=Mnist.BATCH_SIZE, shuffle=True)
-        self.testpart5 = DataLoader(DatasetSplit(self.test_data, p5), batch_size=Mnist.BATCH_SIZE, shuffle=True)
+        self.testpart1 = DataLoader(DatasetSplit(self.test_data, p1), batch_size=2000, shuffle=True)
+        self.testpart2 = DataLoader(DatasetSplit(self.test_data, p2), batch_size=2000, shuffle=True)
+        self.testpart3 = DataLoader(DatasetSplit(self.test_data, p3), batch_size=2000, shuffle=True)
+        self.testpart4 = DataLoader(DatasetSplit(self.test_data, p4), batch_size=2000, shuffle=True)
+        self.testpart5 = DataLoader(DatasetSplit(self.test_data, p5), batch_size=2000, shuffle=True)
 
         #init
         #self.train_loader = torch.utils.data.DataLoader(dataset=self.train_data, batch_size=Mnist.BATCH_SIZE, shuffle=True)
