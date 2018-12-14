@@ -102,7 +102,7 @@ def run(size, rank):
 
 
 def init_processes(size, rank, run):
-    dist.init_process_group(backend='tcp', init_method='tcp://127.0.0.1:5000', world_size=size, rank=rank)
+    dist.init_process_group(backend='gloo', init_method='tcp://127.0.0.1:5000', world_size=size, rank=rank)
     run(size, rank)
 
 if __name__ == "__main__":
