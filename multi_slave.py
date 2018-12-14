@@ -72,11 +72,7 @@ def run(size, rank):
         pred_y = torch.max(test_output, 1)[1].data.numpy()
         accuracy = float((pred_y == test_y.data.numpy()).astype(int).sum()) / float(test_y.size(0))
         # print_str = 'Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy
-        f = open('./test.txt', 'a')
-        print('Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(),
-              '| test accuracy: %.2f' % accuracy, file=f)
-        print('Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(),
-              '| test accuracy: %.2f' % accuracy)
+
 
         for step, (b_x, b_y) in enumerate(train_loader):
 
@@ -91,6 +87,14 @@ def run(size, rank):
 
         for param in modell.parameters():
             dist.reduce(param.data, dst=0, op=dist.reduce_op.SUM, group=group)
+
+        f = open('./test.txt', 'a')
+        print('Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(),
+              '| test accuracy: %.2f' % accuracy, file=f)
+        print('Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(),
+              '| test accuracy: %.2f' % accuracy)
+        #f.writelines(print_str)
+        #f.write('\n Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy)
 
 
 def init_processes(size, rank, run):
