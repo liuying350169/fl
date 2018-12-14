@@ -41,6 +41,6 @@ if __name__ == "__main__":
 
     size = int(sys.argv[2])
 
-    dist.init_process_group(backend='tcp', init_method='tcp://127.0.0.1:5000', world_size=size, rank=rank)
+    dist.init_process_group(backend='gloo', init_method='tcp://127.0.0.1:5000', world_size=size, rank=rank)
 
     run()
