@@ -71,7 +71,6 @@ def run(size, rank):
         test_output, last_layer = modell(test_x)
         pred_y = torch.max(test_output, 1)[1].data.numpy()
         accuracy = float((pred_y == test_y.data.numpy()).astype(int).sum()) / float(test_y.size(0))
-        # print_str = 'Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy
 
 
         for step, (b_x, b_y) in enumerate(train_loader):
@@ -93,6 +92,7 @@ def run(size, rank):
               '| test accuracy: %.2f' % accuracy, file=f)
         print('Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(),
               '| test accuracy: %.2f' % accuracy)
+        f.close()
         #f.writelines(print_str)
         #f.write('\n Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy)
 
