@@ -91,9 +91,16 @@ def run(size, rank):
         test_output, last_layer = modell(test_x)
         pred_y = torch.max(test_output, 1)[1].data.numpy()
         accuracy = float((pred_y == test_y.data.numpy()).astype(int).sum()) / float(test_y.size(0))
+        #print_str = 'Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy
+        f = open('./test.txt', 'a')
+
+        print('Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy, file=f)
         print('Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy)
 
-                
+        #f.writelines(print_str)
+        #f.write('\n Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy)
+
+
 def init_processes(size, rank, run):
     dist.init_process_group(backend='tcp', init_method='tcp://127.0.0.1:5000', world_size=size, rank=rank)
     run(size, rank)
