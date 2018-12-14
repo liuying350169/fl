@@ -18,11 +18,14 @@ def get_new_model(model, group):
 
 def run(size, rank):
 
+
     modell = model.CNN()
     #modell = model.AlexNet()
 
     optimizer = torch.optim.Adam(modell.parameters(), lr=LR)
     loss_func = torch.nn.CrossEntropyLoss()
+
+
 
     if(IID == True):
         train_loader = Mnist().get_train_data()
@@ -44,7 +47,6 @@ def run(size, rank):
             if(rank == 5):
                 train_loader = Mnist_noniid().get_train_data5()
                 test_data = Mnist_noniid().get_test_data5()
- 
 
     #size = dist.get_world_size()
     #rank = dist.get_rank()
@@ -61,11 +63,20 @@ def run(size, rank):
         group_list.append(i)
     group = dist.new_group(group_list)
 
-
     for epoch in range(MAX_EPOCH):
 
         modell = get_new_model(modell, group)
         #current_model = copy.deepcopy(modell)
+
+        test_output, last_layer = modell(test_x)
+        pred_y = torch.max(test_output, 1)[1].data.numpy()
+        accuracy = float((pred_y == test_y.data.numpy()).astype(int).sum()) / float(test_y.size(0))
+        # print_str = 'Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy
+        f = open('./test.txt', 'a')
+        print('Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(),
+              '| test accuracy: %.2f' % accuracy, file=f)
+        print('Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(),
+              '| test accuracy: %.2f' % accuracy)
 
         for step, (b_x, b_y) in enumerate(train_loader):
 
@@ -78,31 +89,12 @@ def run(size, rank):
             loss.backward()   
             optimizer.step()
 
-
-        #new_model = copy.deepcopy(modell)
-
-        #for param1, param2 in zip( current_model.parameters(), new_model.parameters() ):
-            #dist.reduce(param2.data-param1.data, dst=0, op=dist.reduce_op.SUM, group=group)
-
         for param in modell.parameters():
             dist.reduce(param.data, dst=0, op=dist.reduce_op.SUM, group=group)
 
 
-        test_output, last_layer = modell(test_x)
-        pred_y = torch.max(test_output, 1)[1].data.numpy()
-        accuracy = float((pred_y == test_y.data.numpy()).astype(int).sum()) / float(test_y.size(0))
-        #print_str = 'Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy
-        f = open('./test.txt', 'a')
-
-        print('Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy, file=f)
-        print('Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy)
-
-        #f.writelines(print_str)
-        #f.write('\n Epoch: ', epoch, ' Rank: ', rank, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy)
-
-
 def init_processes(size, rank, run):
-    dist.init_process_group(backend='gloo', init_method='tcp://127.0.0.1:5000', world_size=size, rank=rank)
+    dist.init_process_group(backend='tcp', init_method='tcp://127.0.0.1:5000', world_size=size, rank=rank)
     run(size, rank)
 
 if __name__ == "__main__":

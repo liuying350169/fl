@@ -93,11 +93,17 @@ class Mnist_noniid():
         p4 = idxs[6000:8000]
         p5 = idxs[8000:10000]
 
-        self.testpart1 = DataLoader(DatasetSplit(self.test_data, p1), batch_size=2000, shuffle=True)
-        self.testpart2 = DataLoader(DatasetSplit(self.test_data, p2), batch_size=2000, shuffle=True)
-        self.testpart3 = DataLoader(DatasetSplit(self.test_data, p3), batch_size=2000, shuffle=True)
-        self.testpart4 = DataLoader(DatasetSplit(self.test_data, p4), batch_size=2000, shuffle=True)
-        self.testpart5 = DataLoader(DatasetSplit(self.test_data, p5), batch_size=2000, shuffle=True)
+        # self.testpart1 = DataLoader(DatasetSplit(self.test_data, p1), batch_size=2000, shuffle=True)
+        # self.testpart2 = DataLoader(DatasetSplit(self.test_data, p2), batch_size=2000, shuffle=True)
+        # self.testpart3 = DataLoader(DatasetSplit(self.test_data, p3), batch_size=2000, shuffle=True)
+        # self.testpart4 = DataLoader(DatasetSplit(self.test_data, p4), batch_size=2000, shuffle=True)
+        # self.testpart5 = DataLoader(DatasetSplit(self.test_data, p5), batch_size=2000, shuffle=True)
+
+        self.testpart1 = DataLoader(DatasetSplit(self.test_data, idxs), batch_size=10000, shuffle=True)
+        self.testpart2 = DataLoader(DatasetSplit(self.test_data, idxs), batch_size=10000, shuffle=True)
+        self.testpart3 = DataLoader(DatasetSplit(self.test_data, idxs), batch_size=10000, shuffle=True)
+        self.testpart4 = DataLoader(DatasetSplit(self.test_data, idxs), batch_size=10000, shuffle=True)
+        self.testpart5 = DataLoader(DatasetSplit(self.test_data, idxs), batch_size=10000, shuffle=True)
 
         #init
         #self.train_loader = torch.utils.data.DataLoader(dataset=self.train_data, batch_size=Mnist.BATCH_SIZE, shuffle=True)
